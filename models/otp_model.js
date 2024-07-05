@@ -1,9 +1,9 @@
-const { ObjectId } = require('mongodb')
+
 const mongoose=require('mongoose')
 
 const otp_schema=new mongoose.Schema({
-    user_id:{
-        type:ObjectId,
+    email:{
+        type:String,
         required:true,
     },
     otp:{

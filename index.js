@@ -7,6 +7,16 @@ require('dotenv').config()
 const mongoose=require('mongoose')
 mongoose.connect(process.env.db_url)
 
+const cors=require('cors')
+
+var corsOptions = {
+    origin: 'http://localhost:4200',
+    method:"*"
+  }
+  app.use(cors(corsOptions))
+
+
+
 //
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())

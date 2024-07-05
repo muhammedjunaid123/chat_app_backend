@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer')
 const crypto = require('crypto');
 const user_repo = require('../repositories/user_repository')
 const otp_repo = require('../repositories/otp_repository');
-const { rejects } = require('assert');
+const jwt = require('jsonwebtoken')
 
 
 //User login .it will send otp to mail
@@ -23,11 +23,11 @@ const user_login = async (req, res) => {
     }
 
     //send email
-   await email_send(otp, email, user_id,res)
-    
+    await email_send(otp, email, user_id, res)
+
 }
 // mail transporter
-const email_send = async (otp, email, user_id,res) => {
+const email_send = async (otp, email, user_id, res) => {
 
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -73,20 +73,33 @@ const email_send = async (otp, email, user_id,res) => {
         </table>
         `,
     };
-     await transporter.sendMail(mailOption,(err, info) => {
+    await transporter.sendMail(mailOption, (err, info) => {
         if (err) {
-            return res.status(500).json(result)
+            return res.status(500).json(err)
         }
         else {
             console.log('email has been send:-', info.response);
-             otp_repo.otp_create(otp, user_id)
-            return res.status(201).json({success:true})
-           
+            otp_repo.otp_create(otp, email)
+            return res.status(201).json({ success: true,email:email })
+
         }
     })
 
 }
 
+
+const otp_check = async (req, res) => {
+    const { otp, email } = req.body
+    const result = await otp_repo.otp_check(otp, email)
+    if (result instanceof Error) {
+        return res.status(500).json({message:result['message']})
+    }
+
+    const token = jwt.sign(email, process.env.jwt_s)
+    return res.status(200).json({ success: true, token: token })
+}
+
 module.exports = {
-    user_login
+    user_login,
+    otp_check
 }
