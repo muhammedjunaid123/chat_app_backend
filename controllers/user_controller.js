@@ -4,8 +4,7 @@ const crypto = require('crypto');
 const user_repo = require('../repositories/user_repository')
 const otp_repo = require('../repositories/otp_repository');
 const jwt = require('jsonwebtoken')
-
-
+const image_controller = require('../controllers/image_controller')
 //User login .it will send otp to mail
 const user_login = async (req, res) => {
 
@@ -80,7 +79,7 @@ const email_send = async (otp, email, user_id, res) => {
         else {
             console.log('email has been send:-', info.response);
             otp_repo.otp_create(otp, email)
-            return res.status(201).json({ success: true,email:email })
+            return res.status(201).json({ success: true, email: email })
 
         }
     })
@@ -92,14 +91,31 @@ const otp_check = async (req, res) => {
     const { otp, email } = req.body
     const result = await otp_repo.otp_check(otp, email)
     if (result instanceof Error) {
-        return res.status(500).json({message:result['message']})
+        return res.status(500).json({ message: result['message'] })
     }
 
     const token = jwt.sign(email, process.env.jwt_s)
     return res.status(200).json({ success: true, token: token })
 }
+const get_user = async (req, res) => {
+    const { email } = req.query
+    const user_data = await user_repo.get_user(email)
+    if (!user_data) return res.status(500).json({ message: 'user not found' })
 
+    return res.status(200).json(user_data)
+}
+const set_user_data = async (req, res) => {
+    const {body,file,query}=req
+   if(file){   
+       await image_controller.img_upload(file,body.name,query.id,res)   
+   }else{
+    user_repo.user_profile_update(query.id,body.name,res)
+   }
+    
+}
 module.exports = {
     user_login,
-    otp_check
+    otp_check,
+    get_user,
+    set_user_data
 }
