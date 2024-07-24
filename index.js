@@ -1,7 +1,11 @@
 
 //
 const express = require('express')
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 const app = express()
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 const user_route = require('./routes/user_route')
 require('dotenv').config()
 const mongoose = require('mongoose')
@@ -31,6 +35,7 @@ app.use('/user', user_route)
 
 
 
-app.listen(3000, () => {
+
+httpServer.listen(3000, () => {
   console.log('server running on port 3000');
 })
