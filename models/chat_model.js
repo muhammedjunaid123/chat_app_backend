@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose')
 
 const chat_schema = new mongoose.Schema({
@@ -9,7 +10,6 @@ const chat_schema = new mongoose.Schema({
             },
             name: {
                 type: String,
-                required: true
             }
         }
     ],
@@ -22,9 +22,8 @@ const chat_schema = new mongoose.Schema({
         default: ''
     },
     message_id: {
-        type: ObjectId,
-
+        type: mongoose.Types.ObjectId
     }
 })
 
-module.exports=mongoose.model('chat',chat_schema)
+module.exports = mongoose.model('chat', chat_schema)

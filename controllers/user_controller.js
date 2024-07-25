@@ -5,6 +5,8 @@ const user_repo = require('../repositories/user_repository')
 const otp_repo = require('../repositories/otp_repository');
 const jwt = require('jsonwebtoken')
 const image_controller = require('../controllers/image_controller')
+const chat_repo = require('../repositories/chat_repository');
+const { Error } = require('mongoose');
 //User login .it will send otp to mail
 const user_login = async (req, res) => {
 
@@ -105,17 +107,39 @@ const get_user = async (req, res) => {
     return res.status(200).json(user_data)
 }
 const set_user_data = async (req, res) => {
-    const {body,file,query}=req
-   if(file){   
-       await image_controller.img_upload(file,body.name,query.id,res)   
-   }else{
-    user_repo.user_profile_update(query.id,body.name,res)
-   }
-    
+    const { body, file, query } = req
+    if (file) {
+        await image_controller.img_upload(file, body.name, query.id, res)
+    } else {
+        user_repo.user_profile_update(query.id, body.name, res)
+    }
+
+}
+const user_list = async (req, res) => {
+    const data = await user_repo.user_list(req.body.user_email)
+    if (data instanceof Error) {
+        return res.status(500).json({ message: 'internal server error' })
+    }
+    return res.status(200).json(data)
+
+}
+const single_chat_setup = async (req, res) => {
+    console.log('hit');
+    const { user_email, email } = req.body
+    const user_one = await user_repo.get_user(user_email)
+    const user_two = await user_repo.get_user(email)
+    console.log(user_one, user_two);
+    const result = await chat_repo.single_chat_setup(user_one, user_two)
+    if (result instanceof Error) {
+        return res.status(500).json({ message: 'internal server error' })
+    }
+    return res.status(201).json({ success: true })
 }
 module.exports = {
     user_login,
     otp_check,
     get_user,
-    set_user_data
+    set_user_data,
+    user_list,
+    single_chat_setup
 }

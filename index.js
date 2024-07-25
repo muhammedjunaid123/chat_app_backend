@@ -5,7 +5,15 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const app = express()
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer,{
+  cors:{
+     origin: 'http://localhost:4200',
+  method: "*"
+  }
+});
+const chatController=require('./controllers/chat_controller')
+chatController(io);
+
 const user_route = require('./routes/user_route')
 require('dotenv').config()
 const mongoose = require('mongoose')
@@ -24,9 +32,10 @@ var corsOptions = {
   origin: 'http://localhost:4200',
   method: "*"
 }
-app.use(cors(corsOptions))
+app.use(cors(corsOptions)) 
 
 
+ 
 
 //
 app.use(express.urlencoded({ extended: true }))
@@ -39,3 +48,7 @@ app.use('/user', user_route)
 httpServer.listen(3000, () => {
   console.log('server running on port 3000');
 })
+
+// module.exports={
+//   io
+// }

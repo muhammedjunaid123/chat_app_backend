@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 const message_schema = new mongoose.Schema({
-    message_id: {
-        type: ObjectId,
+    chat_id: {
+        type: mongoose.Types.ObjectId,
         required: true
     },
     messages: [
