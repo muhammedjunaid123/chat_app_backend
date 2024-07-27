@@ -18,18 +18,28 @@ const user_create = async (email) => {
     }
 }
 const get_user = async (email) => {
-    return user_model.findOne({ email: email })
+    try {
+        
+        return user_model.findOne({ email: email })
+    } catch (error) {
+        
+    }
 }
 const user_profile_update = async (id, name, res, url) => {
-    if (url) {
-        await user_model.findByIdAndUpdate({ _id: id }, { $set: { img: url, user_name: name } })
-    } else {
-        await user_model.findByIdAndUpdate({ _id: id }, { $set: { user_name: name } })
-    }
-    res.json({ success: true })
-}
-const user_list = async (email) => {
     try {
+        
+        if (url) {
+            await user_model.findByIdAndUpdate({ _id: id }, { $set: { img: url, user_name: name } })
+        } else {
+            await user_model.findByIdAndUpdate({ _id: id }, { $set: { user_name: name } })
+        }
+        res.json({ success: true })
+    } catch (error) {
+        
+    }
+    }
+    const user_list = async (email) => {
+        try {
         return user_model.find({email:{$ne:email}})
     } catch (error) {
         return error

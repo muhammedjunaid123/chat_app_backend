@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken')
 const image_controller = require('../controllers/image_controller')
 const chat_repo = require('../repositories/chat_repository');
 const { Error } = require('mongoose');
+const { log } = require('console');
 //User login .it will send otp to mail
 const user_login = async (req, res) => {
 
@@ -100,8 +101,8 @@ const otp_check = async (req, res) => {
     return res.status(200).json({ success: true, token: token })
 }
 const get_user = async (req, res) => {
-    const { email } = req.query
-    const user_data = await user_repo.get_user(email)
+    const { user_email } = req.body
+    const user_data = await user_repo.get_user(user_email)
     if (!user_data) return res.status(500).json({ message: 'user not found' })
 
     return res.status(200).json(user_data)
@@ -135,11 +136,26 @@ const single_chat_setup = async (req, res) => {
     }
     return res.status(201).json({ success: true })
 }
+const chat_list = async (req, res) => {
+    const { user_email } = req.body
+    const data = await chat_repo.chat_list(user_email)
+    if (data instanceof Error) return res.status(500).json({ message: 'internal server error' })
+    return res.status(200).json({ data: data, email: user_email })
+}
+
+const message_data = async (req, res) => {
+const {id}=req.query
+const data= await chat_repo.message_data(id)
+if (data instanceof Error) return res.status(500).json({ message: 'internal server error' })
+    return res.status(200).json(data)
+}
 module.exports = {
     user_login,
     otp_check,
     get_user,
     set_user_data,
     user_list,
-    single_chat_setup
+    single_chat_setup,
+    chat_list,
+    message_data
 }
