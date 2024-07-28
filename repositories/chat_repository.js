@@ -5,6 +5,11 @@ const single_chat_setup = async (user_one, user_two) => {
     try {
 
         const user = [user_one._id, user_two._id]
+        const chat_data=await chat_model.find({users:{$all:[user_one._id, user_two._id]}})
+        console.log(chat_data);
+        if(chat_data.length>0){
+            return chat_data
+        }
         const chat = new chat_model({
             users: user
         })

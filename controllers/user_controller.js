@@ -128,7 +128,6 @@ const single_chat_setup = async (req, res) => {
     const { user_email, email } = req.body
     const user_one = await user_repo.get_user(user_email)
     const user_two = await user_repo.get_user(email)
-    console.log(user_one, user_two);
     const result = await chat_repo.single_chat_setup(user_one, user_two)
     if (result instanceof Error) {
         return res.status(500).json({ message: 'internal server error' })
