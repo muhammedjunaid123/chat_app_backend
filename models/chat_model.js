@@ -4,16 +4,7 @@ const mongoose = require('mongoose')
 const chat_schema = new mongoose.Schema({
     users: [
         {
-            email: {
-                type: String,
-                required: true
-            },
-            name: {
-                type: String,
-            },
-            img:{
-                type:String
-            }
+            type: mongoose.Types.ObjectId, ref: 'User' 
         }
     ],
     is_group: {

@@ -14,7 +14,7 @@ module.exports = async (io) => {
         content: msg
       }
       const result = await message_model.findByIdAndUpdate({ _id: id }, { $push: { messages: message } }, { new: true, useFindAndModify: false })
-      socket.emit('message', result)
+      io.emit('message', result)
     });
     socket.on('disconnect', () => {
       console.log('user disconnected');

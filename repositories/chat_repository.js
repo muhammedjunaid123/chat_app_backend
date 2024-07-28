@@ -4,7 +4,7 @@ const message_model = require('../models/message_model')
 const single_chat_setup = async (user_one, user_two) => {
     try {
 
-        const user = [{ email: user_one['email'], name: user_one['user_name'], img: user_one['img'] }, { email: user_two['email'], name: user_two['user_name'], img: user_two['img'] }]
+        const user = [user_one._id, user_two._id]
         const chat = new chat_model({
             users: user
         })
@@ -19,17 +19,32 @@ const single_chat_setup = async (user_one, user_two) => {
         return error
     }
 }
-const chat_list = async (user_email) => {
+const chat_list = async (id) => {
     try {
-        return await chat_model.find({ users: { $elemMatch: { email: user_email } } })
+        return await chat_model.aggregate([
+            {
+                $match: {
+                    users: { $in:[id]
+                }
+            }
+        },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'users',
+                    foreignField: '_id',
+                    as: 'result'
+                }
+            }])
+       
 
     } catch (error) {
         return error
     }
 }
-const message_data =async (id) => {
+const message_data = async (id) => {
     try {
- return await message_model.findById({_id:id})
+        return await message_model.findById({ _id: id })
     } catch (error) {
         return error
     }

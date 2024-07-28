@@ -125,7 +125,6 @@ const user_list = async (req, res) => {
 
 }
 const single_chat_setup = async (req, res) => {
-    console.log('hit');
     const { user_email, email } = req.body
     const user_one = await user_repo.get_user(user_email)
     const user_two = await user_repo.get_user(email)
@@ -138,7 +137,8 @@ const single_chat_setup = async (req, res) => {
 }
 const chat_list = async (req, res) => {
     const { user_email } = req.body
-    const data = await chat_repo.chat_list(user_email)
+    const user_data=await user_repo.get_user(user_email)
+    const data = await chat_repo.chat_list(user_data._id)
     if (data instanceof Error) return res.status(500).json({ message: 'internal server error' })
     return res.status(200).json({ data: data, email: user_email })
 }
