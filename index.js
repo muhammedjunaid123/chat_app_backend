@@ -13,7 +13,7 @@ const io = new Server(httpServer,{
 });
 const chatController=require('./controllers/chat_controller')
 chatController(io);
-
+const job=require('./job')
 const user_route = require('./routes/user_route')
 require('dotenv').config()
 const mongoose = require('mongoose')

@@ -7,6 +7,11 @@ const chat_schema = new mongoose.Schema({
             type: mongoose.Types.ObjectId, ref: 'User' 
         }
     ],
+    admin: [
+        {
+            type: mongoose.Types.ObjectId, ref: 'User' 
+        }
+    ],
     is_group: {
         type: Boolean,
         default: false
